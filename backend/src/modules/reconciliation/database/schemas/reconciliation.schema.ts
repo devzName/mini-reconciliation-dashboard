@@ -1,41 +1,6 @@
-import { QueryResultRow } from 'pg';
+﻿import { QueryResultRow } from 'pg';
 
 export type ReconcileStatus = 'matched' | 'refunded' | 'orphan' | 'unsettled';
-
-export interface ReconciliationItem {
-  orderCode: string;
-  platform: string | null;
-  orderStatus: 'completed' | 'cancelled' | null;
-  productPrice: number | null;
-  orderDate: Date | null;
-  settlementDate: Date | null;
-  grossRevenue: number;
-  refundAmount: number;
-  feeTotal: number;
-  netReceived: number;
-  reconcileStatus: ReconcileStatus;
-}
-
-export interface ReconciliationStatusCounts {
-  all: number;
-  matched: number;
-  refunded: number;
-  orphan: number;
-  unsettled: number;
-}
-
-export interface ReconciliationPaginationMeta {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-}
-
-export interface ReconciliationResponse {
-  items: ReconciliationItem[];
-  meta: ReconciliationPaginationMeta;
-  statusCounts: ReconciliationStatusCounts;
-}
 
 export interface ReconciliationQuery {
   limit: number;

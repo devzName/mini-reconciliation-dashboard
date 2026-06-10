@@ -1,11 +1,15 @@
-import { Injectable } from '@nestjs/common';
+﻿import { Injectable } from '@nestjs/common';
 
 import { query } from '../../../../database/pool';
 import {
-  ReconciliationItem,
+  ReconciliationDto,
+  ReconciliationItemDto,
+  ReconciliationPaginationDto,
+  ReconciliationStatusCountsDto,
+} from '../../dtos/response/reconciliation.dto';
+import {
   ReconciliationItemRow,
   ReconciliationQuery,
-  ReconciliationResponse,
   ReconciliationStatusCountsRow,
   ReconciliationTotalRow,
 } from '../schemas/reconciliation.schema';
@@ -14,7 +18,7 @@ import {
 export class OrdersRepository {
   async getReconciliation(
     reconciliationQuery: ReconciliationQuery,
-  ): Promise<ReconciliationResponse> {
+  ): Promise<ReconciliationDto> {
     const baseCte = `
       WITH income_by_order AS (
         SELECT
@@ -99,38 +103,18 @@ export class OrdersRepository {
     const total = Number(totalResult.rows[0].total);
     const counts = countsResult.rows[0];
 
-    return {
+    return new ReconciliationDto({
       items: rowsResult.rows.map((row) => this.mapRow(row)),
-      meta: {
+      meta: new ReconciliationPaginationDto({
         limit: reconciliationQuery.limit,
         page: reconciliationQuery.page,
         total,
-        totalPages: Math.ceil(total / reconciliationQuery.limit),
-      },
-      statusCounts: {
-        all: Number(counts.all_count),
-        matched: Number(counts.matched_count),
-        orphan: Number(counts.orphan_count),
-        refunded: Number(counts.refunded_count),
-        unsettled: Number(counts.unsettled_count),
-      },
-    };
+      }),
+      statusCounts: new ReconciliationStatusCountsDto(counts),
+    });
   }
 
-  private mapRow(row: ReconciliationItemRow): ReconciliationItem {
-    return {
-      orderCode: row.order_code,
-      platform: row.platform,
-      orderStatus: row.order_status,
-      productPrice:
-        row.product_price === null ? null : Number(row.product_price),
-      orderDate: row.order_date,
-      settlementDate: row.settlement_date,
-      grossRevenue: Number(row.gross_revenue),
-      refundAmount: Number(row.refund_amount),
-      feeTotal: Number(row.fee_total),
-      netReceived: Number(row.net_received),
-      reconcileStatus: row.reconcile_status,
-    };
+  private mapRow(row: ReconciliationItemRow): ReconciliationItemDto {
+    return new ReconciliationItemDto(row);
   }
 }

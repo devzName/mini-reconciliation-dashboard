@@ -1,10 +1,10 @@
-# Backend Agent Notes
+﻿# Backend Agent Notes
 
 ## Overview
 
 NestJS API for the Mini Reconciliation Dashboard. It imports marketplace
 `orders.csv` and `income.csv`, stores them in PostgreSQL, and exposes KPI and
-reconciliation APIs.
+reconciliation APIs for the Next.js frontend.
 
 ## Structure
 
@@ -21,15 +21,33 @@ backend/
     migrate.ts
     reset-db.ts
   src/
+    common/
+      dtos/
+        page-options.dto.ts
     database/
       pool.ts
     modules/
       reconciliation/
         controllers/
+          reconciliation.controller.ts
         database/
           repositories/
+            income.repository.ts
+            orders.repository.ts
           schemas/
+            income.schema.ts
+            kpi.schema.ts
+            order.schema.ts
+            reconciliation.schema.ts
+        dtos/
+          request/
+            get-reconciliation-request.dto.ts
+          response/
+            kpi.dto.ts
+            reconciliation.dto.ts
         services/
+          reconciliation.service.ts
+        reconciliation.module.ts
 ```
 
 ## Setup
@@ -50,8 +68,9 @@ DATABASE_URL=postgresql://postgres:postgres@localhost:5432/mini_reconciliation
 npm run db:migrate  # creates database if missing, then creates tables
 npm run db:import   # imports scripts/data/orders.csv and income.csv
 npm run db:reset    # drops orders, income, schema_migrations
-npm run start:dev
+npm run dev         # starts NestJS in watch mode
 npm run build
+npm test
 ```
 
 ## API
@@ -61,7 +80,7 @@ GET /api/kpi
 GET /api/reconciliation?page=1&limit=25&status=matched&q=ORD
 ```
 
-`GET /api/reconciliation` supports:
+`GET /api/reconciliation` uses `GetReconciliationRequestDto` and supports:
 
 - `page`
 - `limit`
@@ -69,6 +88,15 @@ GET /api/reconciliation?page=1&limit=25&status=matched&q=ORD
 - `q` for order code search
 
 Default sort is `order_code ASC`.
+
+## DTO Rules
+
+- Request DTOs live in `modules/reconciliation/dtos/request`.
+- Response DTOs live in `modules/reconciliation/dtos/response`.
+- Shared DTOs live in `src/common/dtos`.
+- `PageOptionsDto` is the shared pagination base class.
+- Repositories return DTO class instances, for example `new KpiDto(row)`.
+- DTO constructors should own row-to-response mapping when the input is a DB row.
 
 ## Reconciliation Rules
 

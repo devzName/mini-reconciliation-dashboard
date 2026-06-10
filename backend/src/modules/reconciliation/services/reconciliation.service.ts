@@ -1,20 +1,14 @@
-import { Injectable } from '@nestjs/common';
+﻿import { Injectable } from '@nestjs/common';
 
 import { IncomeRepository } from '../database/repositories/income.repository';
 import { OrdersRepository } from '../database/repositories/orders.repository';
-import { Kpi } from '../database/schemas/kpi.schema';
+import { GetReconciliationRequestDto } from '../dtos/request/get-reconciliation-request.dto';
+import { KpiDto } from '../dtos/response/kpi.dto';
 import {
   ReconcileStatus,
   ReconciliationQuery,
-  ReconciliationResponse,
 } from '../database/schemas/reconciliation.schema';
-
-type RawReconciliationQuery = {
-  limit?: string;
-  page?: string;
-  search?: string;
-  status?: string;
-};
+import { ReconciliationDto } from '../dtos/response/reconciliation.dto';
 
 const reconciliationStatuses: ReconcileStatus[] = [
   'matched',
@@ -31,18 +25,20 @@ export class ReconciliationService {
   ) {}
 
   getReconciliation(
-    rawQuery: RawReconciliationQuery,
-  ): Promise<ReconciliationResponse> {
+    rawQuery: GetReconciliationRequestDto,
+  ): Promise<ReconciliationDto> {
     return this.ordersRepository.getReconciliation(
       this.normalizeQuery(rawQuery),
     );
   }
 
-  getKpi(): Promise<Kpi> {
+  getKpi(): Promise<KpiDto> {
     return this.incomeRepository.getKpi();
   }
 
-  private normalizeQuery(rawQuery: RawReconciliationQuery): ReconciliationQuery {
+  private normalizeQuery(
+    rawQuery: GetReconciliationRequestDto,
+  ): ReconciliationQuery {
     const page = Math.max(Number(rawQuery.page ?? 1) || 1, 1);
     const limit = Math.min(
       Math.max(Number(rawQuery.limit ?? 10) || 10, 1),
@@ -53,7 +49,7 @@ export class ReconciliationService {
     )
       ? (rawQuery.status as ReconcileStatus)
       : undefined;
-    const search = rawQuery.search?.trim() || undefined;
+    const search = rawQuery.q?.trim() || undefined;
 
     return { limit, page, search, status };
   }

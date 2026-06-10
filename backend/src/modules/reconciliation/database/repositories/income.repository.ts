@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
+﻿import { Injectable } from '@nestjs/common';
 
 import { query } from '../../../../database/pool';
-import { Kpi, KpiRow } from '../schemas/kpi.schema';
+import { KpiDto } from '../../dtos/response/kpi.dto';
+import { KpiRow } from '../schemas/kpi.schema';
 
 @Injectable()
 export class IncomeRepository {
-  async getKpi(): Promise<Kpi> {
+  async getKpi(): Promise<KpiDto> {
     const result = await query<KpiRow>(`
       WITH income_totals AS (
         SELECT
@@ -42,13 +43,6 @@ export class IncomeRepository {
 
     const [row] = result.rows;
 
-    return {
-      total_gross: Number(row.total_gross),
-      total_net: Number(row.total_net),
-      total_fees: Number(row.total_fees),
-      reconciliation_rate: Number(row.reconciliation_rate),
-      refund_count: Number(row.refund_count),
-      refund_total: Number(row.refund_total),
-    };
+    return new KpiDto(row);
   }
 }

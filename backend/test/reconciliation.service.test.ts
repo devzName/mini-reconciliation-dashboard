@@ -1,4 +1,4 @@
-/// <reference types="jest" />
+﻿/// <reference types="jest" />
 
 import { ReconciliationService } from '../src/modules/reconciliation/services/reconciliation.service';
 
@@ -45,7 +45,7 @@ describe('ReconciliationService', () => {
     await service.getReconciliation({
       limit: '999',
       page: '-3',
-      search: '  ORD-2026  ',
+      q: '  ORD-2026  ',
       status: 'refunded',
     });
 
@@ -96,7 +96,7 @@ describe('ReconciliationService', () => {
     await service.getReconciliation({
       limit: '10',
       page: '2',
-      status: 'unknown',
+      status: 'unknown' as never,
     });
 
     expect(receivedQuery).toEqual({

@@ -1,7 +1,8 @@
-import { Controller, Get, Query } from '@nestjs/common';
+﻿import { Controller, Get, Query } from '@nestjs/common';
 
-import { Kpi } from '../database/schemas/kpi.schema';
-import { ReconciliationResponse } from '../database/schemas/reconciliation.schema';
+import { GetReconciliationRequestDto } from '../dtos/request/get-reconciliation-request.dto';
+import { KpiDto } from '../dtos/response/kpi.dto';
+import { ReconciliationDto } from '../dtos/response/reconciliation.dto';
 import { ReconciliationService } from '../services/reconciliation.service';
 
 @Controller()
@@ -10,21 +11,13 @@ export class ReconciliationController {
 
   @Get('reconciliation')
   getReconciliation(
-    @Query('limit') limit?: string,
-    @Query('page') page?: string,
-    @Query('q') search?: string,
-    @Query('status') status?: string,
-  ): Promise<ReconciliationResponse> {
-    return this.reconciliationService.getReconciliation({
-      limit,
-      page,
-      search,
-      status,
-    });
+    @Query() query: GetReconciliationRequestDto,
+  ): Promise<ReconciliationDto> {
+    return this.reconciliationService.getReconciliation(query);
   }
 
   @Get('kpi')
-  getKpi(): Promise<Kpi> {
+  getKpi(): Promise<KpiDto> {
     return this.reconciliationService.getKpi();
   }
 }
