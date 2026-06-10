@@ -1,6 +1,7 @@
 ﻿import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
-import { query } from '../../../../database/pool';
 import {
   ReconciliationDto,
   ReconciliationItemDto,
@@ -12,10 +13,16 @@ import {
   ReconciliationQuery,
   ReconciliationStatusCountsRow,
   ReconciliationTotalRow,
-} from '../schemas/reconciliation.schema';
+} from '../../interfaces/reconciliation.interface';
+import { Order } from '../schemas/order.schema';
 
 @Injectable()
 export class OrdersRepository {
+  constructor(
+    @InjectRepository(Order)
+    private readonly orderRepository: Repository<Order>,
+  ) {}
+
   async getReconciliation(
     reconciliationQuery: ReconciliationQuery,
   ): Promise<ReconciliationDto> {
@@ -58,8 +65,8 @@ export class OrdersRepository {
     const search = reconciliationQuery.search ?? null;
     const offset = (reconciliationQuery.page - 1) * reconciliationQuery.limit;
 
-    const [rowsResult, totalResult, countsResult] = await Promise.all([
-      query<ReconciliationItemRow>(
+    const [rows, totals, countsRows] = await Promise.all([
+      this.orderRepository.query<ReconciliationItemRow[]>(
         `
           ${baseCte}
           SELECT *
@@ -73,7 +80,7 @@ export class OrdersRepository {
         `,
         [status, search, reconciliationQuery.limit, offset],
       ),
-      query<ReconciliationTotalRow>(
+      this.orderRepository.query<ReconciliationTotalRow[]>(
         `
           ${baseCte}
           SELECT COUNT(*)::text AS total
@@ -84,7 +91,7 @@ export class OrdersRepository {
         `,
         [status, search],
       ),
-      query<ReconciliationStatusCountsRow>(
+      this.orderRepository.query<ReconciliationStatusCountsRow[]>(
         `
           ${baseCte}
           SELECT
@@ -100,11 +107,11 @@ export class OrdersRepository {
       ),
     ]);
 
-    const total = Number(totalResult.rows[0].total);
-    const counts = countsResult.rows[0];
+    const total = Number(totals[0].total);
+    const counts = countsRows[0];
 
     return new ReconciliationDto({
-      items: rowsResult.rows.map((row) => this.mapRow(row)),
+      items: rows.map((row) => this.mapRow(row)),
       meta: new ReconciliationPaginationDto({
         limit: reconciliationQuery.limit,
         page: reconciliationQuery.page,
@@ -118,3 +125,6 @@ export class OrdersRepository {
     return new ReconciliationItemDto(row);
   }
 }
+
+
+

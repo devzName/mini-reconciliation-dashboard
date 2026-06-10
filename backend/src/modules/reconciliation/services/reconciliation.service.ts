@@ -7,7 +7,7 @@ import { KpiDto } from '../dtos/response/kpi.dto';
 import {
   ReconcileStatus,
   ReconciliationQuery,
-} from '../database/schemas/reconciliation.schema';
+} from '../interfaces/reconciliation.interface';
 import { ReconciliationDto } from '../dtos/response/reconciliation.dto';
 
 const reconciliationStatuses: ReconcileStatus[] = [
@@ -54,3 +54,5 @@ export class ReconciliationService {
     return { limit, page, search, status };
   }
 }
+
+

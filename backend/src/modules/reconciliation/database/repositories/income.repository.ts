@@ -1,13 +1,20 @@
 ﻿import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
-import { query } from '../../../../database/pool';
 import { KpiDto } from '../../dtos/response/kpi.dto';
-import { KpiRow } from '../schemas/kpi.schema';
+import { KpiRow } from '../../interfaces/kpi.interface';
+import { Income } from '../schemas/income.schema';
 
 @Injectable()
 export class IncomeRepository {
+  constructor(
+    @InjectRepository(Income)
+    private readonly incomeRepository: Repository<Income>,
+  ) {}
+
   async getKpi(): Promise<KpiDto> {
-    const result = await query<KpiRow>(`
+    const rows = await this.incomeRepository.query<KpiRow[]>(`
       WITH income_totals AS (
         SELECT
           COALESCE(SUM(gross_revenue), 0) AS total_gross,
@@ -41,8 +48,9 @@ export class IncomeRepository {
       CROSS JOIN order_totals
     `);
 
-    const [row] = result.rows;
+    const [row] = rows;
 
     return new KpiDto(row);
   }
 }
+

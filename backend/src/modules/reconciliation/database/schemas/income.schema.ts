@@ -1,21 +1,25 @@
-import { QueryResultRow } from 'pg';
+﻿import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-export interface Income {
-  id: number;
-  orderCode: string;
-  settlementDate: Date;
-  grossRevenue: number;
-  refundAmount: number;
-  feeTotal: number;
-  netReceived: number;
-}
+@Entity({ name: 'income' })
+export class Income {
+  @PrimaryGeneratedColumn({ type: 'bigint' })
+  id!: string;
 
-export interface IncomeRow extends QueryResultRow {
-  id: number | string;
-  order_code: string;
-  settlement_date: Date;
-  gross_revenue: number | string;
-  refund_amount: number | string;
-  fee_total: number | string;
-  net_received: number | string;
+  @Column({ name: 'order_code', type: 'text', unique: true })
+  orderCode!: string;
+
+  @Column({ name: 'settlement_date', type: 'date' })
+  settlementDate!: Date;
+
+  @Column({ name: 'gross_revenue', type: 'integer' })
+  grossRevenue!: number;
+
+  @Column({ name: 'refund_amount', type: 'integer' })
+  refundAmount!: number;
+
+  @Column({ name: 'fee_total', type: 'integer' })
+  feeTotal!: number;
+
+  @Column({ name: 'net_received', type: 'integer' })
+  netReceived!: number;
 }

@@ -3,7 +3,7 @@ import {
   ReconcileStatus,
   ReconciliationItemRow,
   ReconciliationStatusCountsRow,
-} from '../../database/schemas/reconciliation.schema';
+} from '../../interfaces/reconciliation.interface';
 
 export class ReconciliationItemDto {
   orderCode!: string;
@@ -65,5 +65,7 @@ export class ReconciliationDto {
     Object.assign(this, data);
   }
 }
+
+
 
 

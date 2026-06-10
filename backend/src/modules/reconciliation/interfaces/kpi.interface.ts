@@ -1,6 +1,4 @@
-﻿import { QueryResultRow } from 'pg';
-
-export interface KpiRow extends QueryResultRow {
+﻿export interface KpiRow {
   total_gross: number | string;
   total_net: number | string;
   total_fees: number | string;

@@ -21,24 +21,24 @@ backend/
     migrate.ts
     reset-db.ts
   src/
+    app.module.ts              # TypeORM PostgreSQL connection config
     common/
       dtos/
         page-options.dto.ts
-    database/
-      pool.ts
     modules/
       reconciliation/
         controllers/
           reconciliation.controller.ts
+        interfaces/
+          kpi.interface.ts
+          reconciliation.interface.ts
         database/
           repositories/
             income.repository.ts
             orders.repository.ts
           schemas/
             income.schema.ts
-            kpi.schema.ts
             order.schema.ts
-            reconciliation.schema.ts
         dtos/
           request/
             get-reconciliation-request.dto.ts
@@ -88,6 +88,14 @@ GET /api/reconciliation?page=1&limit=25&status=matched&q=ORD
 - `q` for order code search
 
 Default sort is `order_code ASC`.
+
+## Database / TypeORM
+
+- Nest runtime uses TypeORM with PostgreSQL via `TypeOrmModule.forRoot` in `src/app.module.ts`.
+- `Order` and `Income` schemas are TypeORM entities with `@Entity`, `@Column`, and primary key decorators.
+- `synchronize` is disabled; database shape is controlled by SQL migrations.
+- Repositories use TypeORM `DataSource.query()` for the current reconciliation SQL because the API needs aggregate and full outer join queries.
+- Migration/import/reset scripts still use standalone script DB helpers and are run outside Nest.
 
 ## DTO Rules
 

@@ -1,4 +1,4 @@
-﻿import { KpiRow } from '../../database/schemas/kpi.schema';
+﻿import { KpiRow } from '../../interfaces/kpi.interface';
 
 export class KpiDto {
   total_gross!: number;
@@ -17,3 +17,6 @@ export class KpiDto {
     this.refund_total = Number(row.refund_total);
   }
 }
+
+
+

@@ -1,6 +1,4 @@
-﻿import { QueryResultRow } from 'pg';
-
-export type ReconcileStatus = 'matched' | 'refunded' | 'orphan' | 'unsettled';
+﻿export type ReconcileStatus = 'matched' | 'refunded' | 'orphan' | 'unsettled';
 
 export interface ReconciliationQuery {
   limit: number;
@@ -9,7 +7,7 @@ export interface ReconciliationQuery {
   status?: ReconcileStatus;
 }
 
-export interface ReconciliationItemRow extends QueryResultRow {
+export interface ReconciliationItemRow {
   order_code: string;
   platform: string | null;
   order_status: 'completed' | 'cancelled' | null;
@@ -23,11 +21,11 @@ export interface ReconciliationItemRow extends QueryResultRow {
   reconcile_status: ReconcileStatus;
 }
 
-export interface ReconciliationTotalRow extends QueryResultRow {
+export interface ReconciliationTotalRow {
   total: number | string;
 }
 
-export interface ReconciliationStatusCountsRow extends QueryResultRow {
+export interface ReconciliationStatusCountsRow {
   all_count: number | string;
   matched_count: number | string;
   refunded_count: number | string;

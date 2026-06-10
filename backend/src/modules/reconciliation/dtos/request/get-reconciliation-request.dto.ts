@@ -1,6 +1,6 @@
 ﻿import { IsIn, IsOptional, IsString } from 'class-validator';
 
-import { ReconcileStatus } from '../../database/schemas/reconciliation.schema';
+import { ReconcileStatus } from '../../interfaces/reconciliation.interface';
 
 const reconciliationStatuses: ReconcileStatus[] = [
   'matched',
@@ -26,3 +26,5 @@ export class GetReconciliationRequestDto {
   @IsIn(reconciliationStatuses)
   status?: ReconcileStatus;
 }
+
+

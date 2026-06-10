@@ -1,17 +1,19 @@
-import { QueryResultRow } from 'pg';
+﻿import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-export interface Order {
-  orderCode: string;
-  platform: string;
-  status: 'completed' | 'cancelled';
-  productPrice: number;
-  orderDate: Date;
-}
+@Entity({ name: 'orders' })
+export class Order {
+  @PrimaryColumn({ name: 'order_code', type: 'text' })
+  orderCode!: string;
 
-export interface OrderRow extends QueryResultRow {
-  order_code: string;
-  platform: string;
-  status: 'completed' | 'cancelled';
-  product_price: number | string;
-  order_date: Date;
+  @Column({ type: 'text' })
+  platform!: string;
+
+  @Column({ type: 'text' })
+  status!: 'completed' | 'cancelled';
+
+  @Column({ name: 'product_price', type: 'integer' })
+  productPrice!: number;
+
+  @Column({ name: 'order_date', type: 'date' })
+  orderDate!: Date;
 }
