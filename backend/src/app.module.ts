@@ -1,0 +1,10 @@
+import { Module } from '@nestjs/common';
+
+import { ReconciliationModule } from './modules/reconciliation/reconciliation.module';
+
+@Module({
+  imports: [ReconciliationModule],
+  controllers: [],
+  providers: [],
+})
+export class AppModule {}
