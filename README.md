@@ -24,6 +24,7 @@ Tạo `backend/.env`:
 
 ```bash
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/mini_reconciliation
+#DATABASE_URL=postgresql://<username>:<password>@<host>:<port>/<database>
 ```
 
 Tạo database nếu chưa có và chạy migration:
